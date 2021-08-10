@@ -18,7 +18,7 @@ type VideoService struct {
 }
 
 func NewVideoService() VideoService {
-
+	return VideoService{}
 }
 
 func (v *VideoService) Download(bucketName string) error {
