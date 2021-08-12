@@ -12,6 +12,8 @@ import (
 	"cloud.google.com/go/storage"
 )
 
+const DIR = string(os.PathSeparator)
+
 type VideoService struct {
 	Video           *domain.Video
 	VideoRepository repositories.VideoRepository
@@ -44,7 +46,7 @@ func (v *VideoService) Download(bucketName string) error {
 		return err
 	}
 
-	f, err := os.Create(os.Getenv("localStoragePath") + "/" + v.Video.ID + ".mp4")
+	f, err := os.Create(os.Getenv("localStoragePath") + DIR + v.Video.ID + ".mp4")
 	if err != nil {
 		return err
 	}
@@ -61,13 +63,13 @@ func (v *VideoService) Download(bucketName string) error {
 
 func (v *VideoService) Fragment() error {
 
-	err := os.Mkdir(os.Getenv("localStoragePath")+"/"+v.Video.ID, os.ModePerm)
+	err := os.Mkdir(os.Getenv("localStoragePath")+DIR+v.Video.ID, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	source := os.Getenv("localStoragePath") + "/" + v.Video.ID + ".mp4"
-	target := os.Getenv("localStoragePath") + "/" + v.Video.ID + ".frag"
+	source := os.Getenv("localStoragePath") + DIR + v.Video.ID + ".mp4"
+	target := os.Getenv("localStoragePath") + DIR + v.Video.ID + ".frag"
 
 	cmd := exec.Command("mp4fragment", source, target)
 	output, err := cmd.CombinedOutput()
@@ -88,13 +90,13 @@ func printOutput(out []byte) {
 
 func (v *VideoService) Encode() error {
 	cmdArgs := []string{}
-	cmdArgs = append(cmdArgs, os.Getenv("localStoragePath")+"/"+v.Video.ID+".frag")
+	cmdArgs = append(cmdArgs, os.Getenv("localStoragePath")+DIR+v.Video.ID+".frag")
 	cmdArgs = append(cmdArgs, "--use-segment-timeline")
 	cmdArgs = append(cmdArgs, "-o")
-	cmdArgs = append(cmdArgs, os.Getenv("localStoragePath")+"/"+v.Video.ID)
+	cmdArgs = append(cmdArgs, os.Getenv("localStoragePath")+DIR+v.Video.ID)
 	cmdArgs = append(cmdArgs, "-f")
 	cmdArgs = append(cmdArgs, "--exec-dir")
-	cmdArgs = append(cmdArgs, "/opt/bento4/bin/")
+	cmdArgs = append(cmdArgs, os.Getenv("BENTO4_BIN_PATH"))
 	cmd := exec.Command("mp4dash", cmdArgs...)
 
 	output, err := cmd.CombinedOutput()
