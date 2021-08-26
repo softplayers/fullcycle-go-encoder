@@ -34,8 +34,9 @@ func (vu *VideoUpload) UploadObject(objectPath string, client *storage.Client, c
 
 	defer f.Close()
 
-	wc := client.Bucket(vu.OutputBucket).Object(path[1]).NewWriter(ctx)
-	//wc.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}}
+	canonicalPath := strings.Replace(path[1], "\\", "/", -1) // for Windows
+	wc := client.Bucket(vu.OutputBucket).Object(canonicalPath).NewWriter(ctx)
+	// wc.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}} // conflicts with uniform-buckets
 
 	if _, err = io.Copy(wc, f); err != nil {
 		return err

@@ -126,7 +126,7 @@ func (v *VideoService) Finish() error {
 
 	err = os.RemoveAll(os.Getenv("localStoragePath") + DIR + v.Video.ID)
 	if err != nil {
-		log.Println("error removing mp4 ", v.Video.ID, ".mp4")
+		log.Println("error removing dir ", v.Video.ID)
 		return err
 	}
 
