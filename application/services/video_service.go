@@ -88,6 +88,16 @@ func printOutput(out []byte) {
 	}
 }
 
+func (v *VideoService) InsertVideo() error {
+	_, err := v.VideoRepository.Insert(v.Video)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (v *VideoService) Encode() error {
 	cmdArgs := []string{}
 	cmdArgs = append(cmdArgs, os.Getenv("localStoragePath")+DIR+v.Video.ID+".frag")
