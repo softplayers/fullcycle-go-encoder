@@ -6,6 +6,8 @@ services:
     build: .
     volumes:
       - .:/go/src
+    environment: 
+      GOOGLE_APPLICATION_CREDENTIALS: "/go/src/bucket-credential.json"
 
   db:
     image: postgres:9.4
