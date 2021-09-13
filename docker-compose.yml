@@ -22,12 +22,22 @@ services:
       - "5432:5432"
 
   rabbit:
-    image: "rabbitmq:3-management"
+    image: 'rabbitmq:3.8-management-alpine'
+    container_name: micro-catalog-rabbitmq
+    hostname: rabbitmq
     environment:
       RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
       RABBITMQ_DEFAULT_USER: "rabbitmq"
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
       RABBITMQ_DEFAULT_VHOST: "/"
+    volumes: 
+      - ./.rabbitmqdata:/var/lib/rabbitmq/mnesia
     ports:
       - "15672:15672"
       - "5672:5672"
+    networks: 
+      - micro-catalog
+
+networks: 
+  micro-catalog:
+    driver: bridge
